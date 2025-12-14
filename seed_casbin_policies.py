@@ -6,15 +6,16 @@ def main():
 
     e.clear_policy()
 
-    e.add_policy("admin", "admin_panel", "read")
-    e.add_policy("admin", "admin_panel", "write")
-    e.add_policy("admin", "users", "read")
-    e.add_policy("admin", "users", "write")
+    # Tenant 1: alice is admin
+    e.add_policy("admin", 1, "admin_panel", "read")
+    e.add_policy("admin", 1, "admin_panel", "write")
+    e.add_policy("admin", 1, "users", "read")
+    e.add_policy("admin", 1, "users", "write")
+    e.add_grouping_policy("alice", 1, "admin")
 
-    e.add_grouping_policy("alice", "admin")
-
-    e.add_policy("user", "data1", "read")
-    e.add_grouping_policy("bob", "user")
+    # Tenant 2: bob is regular user who can read data1
+    e.add_policy("user", 2, "data1", "read")
+    e.add_grouping_policy("bob", 2, "user")
 
     e.save_policy()
 
