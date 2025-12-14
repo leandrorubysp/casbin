@@ -69,7 +69,7 @@ def casbin_enforce(
     ):
         e = get_casbin_enforcer()
         # We'll use 'dom' (domain) in Casbin model to represent the tenant.
-        if not e.enforce(current_user.username, tenant_id, obj, act):
+        if not e.enforce(current_user.username, str(tenant_id), obj, act):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not enough permissions",
