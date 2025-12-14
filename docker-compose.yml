@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fastapi_casbin_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-appdb}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  app:
+    build: .
+    container_name: fastapi_casbin_app
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "alembic upgrade head &&
+             python seed_casbin_policies.py &&
+             uvicorn main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  postgres_data:
